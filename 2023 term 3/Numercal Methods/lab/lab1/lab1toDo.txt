@@ -1,0 +1,4 @@
+1- do sort
+take input then sortit
+2- find most repeated element
+ 

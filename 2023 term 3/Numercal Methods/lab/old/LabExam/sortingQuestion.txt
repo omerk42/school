@@ -1,0 +1,14 @@
+array = [2,1,4];
+for j = 0 : array-1
+    for i = 1: array-j-1
+        if array(i)>array(i+1)
+            temp = array(i);
+            array(i) = array(i+1);
+            array(i+1) = temp;
+        end
+    end
+end
+
+disp(array);
+
+%Essam Anwar  392024443%

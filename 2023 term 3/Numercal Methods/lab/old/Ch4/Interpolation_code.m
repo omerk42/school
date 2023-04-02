@@ -1,0 +1,146 @@
+n = int64(input('Enter the number of terms- '));
+for i = 1:n
+    ax(i) = input('Enter the value of x- ');
+end
+
+for j = 1:n
+    ay(j) = input('Enter the value of y- ');
+end
+
+x = input('Enter the value of x for which you want the value of y- ');
+h=ax(2)-ax(1);
+TF = isoutlier(ay);
+for i=1:n
+    if TF(i)==1
+        fprintf('Outlier (%f)=>%0.4f \n',[i],[ay(i)]);
+    end
+end
+% use forward
+u = (x-ax(round(n/2)))/h;
+if x < ax(round(n/2))
+    % gauss backward
+    if u < 0 && u > -0.5
+        disp('gauss backward ran');
+        for i = 1:n-1
+            difference(i,2)=ay(i+1)-ay(i);
+        end
+        for j = 2:4
+            for i = 1:n-j
+                difference(i,j)=difference(i+1,j-1)-difference(i,j-1);
+            end
+        end
+
+        i=1;
+        while 1
+            i=i+1;
+            if ~(ax(i)<x)
+                break;
+            end
+        end
+        i=i-1;
+        p=(x-ax(i))/h;
+        y1=p*difference(i,2);
+        y2=p*(p+1)*difference(i,3)/2;
+        y3=(p+1)*p*(p-1)*difference(i-1,4)/6;
+        y4=(p+2)*(p+1)*p*(p-1)*difference(i-2,5)/24;
+        y=ay(i)+y1+y2+y3+y4;
+
+        fprintf('when x=%6.1f,y=%6.4f',[x],[y]);
+    else
+        % newton forward
+        disp('newton forward ran');
+        for i = 1:n-1
+            difference(i,2)=ay(i+1)-ay(i);
+        end
+        for j = 2:4
+            for i = 1:n-j
+                difference(i,j)=difference(i+1,j-1)-difference(i,j-1);
+            end
+        end
+        i=2;
+        while 1
+            i=i+1;
+            if ~(ax(i)<x)
+                break;
+            end
+        end
+        %i=i-1;
+
+        p=(x-ax(i))/h;
+        difference_2 = logical(difference);
+        y1=p*difference_2(i,1);
+        y2=p*(p+1)*difference_2(i,2)/2;
+        y3=(p+1)*p*(p-1)*difference_2(i-1,3)/6;
+        y4=(p+2)*(p+1)*p*(p-1)*difference_2(i-2,4)/24;
+
+        y=ay(i)+y1+y2+y3+y4;
+
+        fprintf('when x=%f and y=%0.4f',[x],[y]);
+    end
+    
+else
+    % gauss forward
+    if u > 0 && u < 0.5        
+        disp('gauss forward ran');
+        for i = 1:n-1
+            difference(i,2)=ay(i+1)-ay(i);
+        end
+        for j = 2:4
+            for i = 1:n-j
+                difference(i,j)=difference(i+1,j-1)-difference(i,j-1);
+            end
+        end
+        i=1;
+        while 1
+            i=i+1;
+            if ~(ax(i)<x)
+                break;
+            end
+        end
+        i=i-1;
+        
+        p=(x-ax(i+1))/h;
+        y1=p*difference(i+1,2);
+        y2=p*(p-1)*difference(i,3)/2;
+        y3=(p+1)*p*(p-1)*difference(i-1,4)/6;
+        y4=(p+1)*p*(p-1)*(p-2)*difference(i-2,5)/24;
+
+        y=ay(i)+y1+y2+y3+y4;
+        fprintf('when x=%6.4f,y=%6.8f',[x],[y]);
+    else
+    % newton backward
+        disp('newton backward ran');
+        for i = 1:n-1
+            difference(i,2)=ay(i+1)-ay(i);
+        end
+        for j = 2:4
+            for i = 1:n-j
+                difference(i,j)=difference(i+1,j-1)-difference(i,j-1);
+            end
+        end
+
+        i=1;
+        while 1
+            i=i+1;
+            if ~(ax(i)>x)
+                break;
+            end
+        end
+        x0=ax(i);
+        sum=0;
+        y0=ay(i);
+        fun=1;
+        p=(x-x0)/h;
+        sum=y0;
+
+        for k=1:4
+            fun=(fun*(p-(k-1)))/k;
+            sum=sum+fun*difference(i,k);
+        end
+
+        fprintf('when x=%6.4f and y=%6.4f',[x],[sum]);
+    end
+    
+end
+
+    
